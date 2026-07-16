@@ -27,34 +27,55 @@ class Worker {
   Future<void> getData() async {
     try {
       Response response = await get(
-        Uri.parse(
-          "https://api.openweathermap.org/data/2.5/weather?q=$location&appid=681d7c1ea1998da88af9b913ab2c2543",
-        ),
+        Uri.https("api.openweathermap.org", "/data/2.5/weather", {
+          "q": location.trim(),
+          "appid": "681d7c1ea1998da88af9b913ab2c2543",
+          "units": "metric",
+        }),
       );
       Map data = jsonDecode(response.body);
-      // getting location
-      String getlocation = data['name'];
-      // getting temp and humidity
-      Map tempData = data['main'];
-      double gettemp = tempData['temp'] - 273.15;
-      String gethumidity = tempData['humidity'].toString();
-      // getting air speed
-      Map windData = data['wind'];
-      double getspeed = windData['speed'] / 0.27777777777778;
 
-      // getting description
-      List weatherData = data['weather'];
-      String getdescription = weatherData[0]['description'];
+      if (data['cod'].toString() == "200") {
+        // getting location
+        String getlocation = data['name'] ?? "Unknown";
+        // getting temp and humidity
+        Map? tempData = data['main'];
+        double gettemp = 0.0;
+        String gethumidity = "0";
+        if (tempData != null) {
+          gettemp = (tempData['temp'] as num).toDouble();
+          gethumidity = tempData['humidity'].toString();
+        }
+        
+        // getting air speed
+        Map? windData = data['wind'];
+        double getspeed = 0.0;
+        if (windData != null) {
+          getspeed = (windData['speed'] as num).toDouble() * 3.6;
+        }
 
+        // getting description
+        List? weatherData = data['weather'];
+        String getdescription = "No description";
+        String getmain = "Clear";
+        String geticon = "03n";
+        if (weatherData != null && weatherData.isNotEmpty) {
+          getdescription = weatherData[0]['description'] ?? "No description";
+          getmain = weatherData[0]['main'] ?? "Clear";
+          geticon = weatherData[0]["icon"] ?? "03n";
+        }
 
-      // assigning values
-      temp = gettemp.toStringAsFixed(1);
-      humidity = gethumidity;
-      airSpeed = getspeed.toStringAsFixed(1);
-      description = getdescription.toString();
-      location = getlocation.toString();
-      main = weatherData[0]['main'];
-      icon = weatherData[0]["icon"].toString();
+        // assigning values
+        temp = gettemp.toStringAsFixed(1);
+        humidity = gethumidity;
+        airSpeed = getspeed.toStringAsFixed(1);
+        description = getdescription;
+        location = getlocation;
+        main = getmain;
+        icon = geticon;
+      } else {
+        throw Exception("City not found");
+      }
     } catch (e) {
       temp = "NA";
       humidity = "NA";

@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:weather_icons/weather_icons.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -43,7 +42,32 @@ class _HomeState extends State<Home> {
     String air = info?['airSpeed_value'] ?? "0";
     String des = info?['description_value'] ?? "0";
     String loc = info?['location_value'] ?? "Unknown";
-    String icon = info?['icon_value'] ?? "Unknown";
+    String icon = info?['icon_value'] ?? "03n";
+    String main = info?['main_value'] ?? "Clear";
+
+    IconData getWeatherIcon(String iconCode) {
+      switch (iconCode) {
+        case "01d": return Icons.wb_sunny;
+        case "01n": return Icons.nightlight_round;
+        case "02d": return Icons.wb_cloudy;
+        case "02n": return Icons.nights_stay;
+        case "03d":
+        case "03n": return Icons.cloud;
+        case "04d":
+        case "04n": return Icons.wb_cloudy;
+        case "09d":
+        case "09n": return Icons.grain;
+        case "10d":
+        case "10n": return Icons.umbrella;
+        case "11d":
+        case "11n": return Icons.thunderstorm;
+        case "13d":
+        case "13n": return Icons.ac_unit;
+        case "50d":
+        case "50n": return Icons.foggy;
+        default: return Icons.wb_sunny;
+      }
+    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -126,6 +150,8 @@ class _HomeState extends State<Home> {
                           children: [
                             Image.network(
                               "https://openweathermap.org/img/wn/$icon@2x.png",
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.image_not_supported),
                             ),
                             const SizedBox(width: 20),
                             Expanded(
@@ -133,10 +159,11 @@ class _HomeState extends State<Home> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "$des",
+                                    des,
                                     style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      textBaseline: TextBaseline.alphabetic,
                                     ),
                                   ),
                                   Text(
@@ -172,7 +199,7 @@ class _HomeState extends State<Home> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(WeatherIcons.day_sunny),
+                            Icon(getWeatherIcon(icon), size: 40),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -202,7 +229,7 @@ class _HomeState extends State<Home> {
                           children: [
                             const Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Icon(WeatherIcons.day_cloudy_windy)],
+                              children: [Icon(Icons.air, color: Colors.blue)],
                             ),
                             const SizedBox(height: 25),
                             Text(
@@ -230,7 +257,7 @@ class _HomeState extends State<Home> {
                           children: [
                             const Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Icon(WeatherIcons.humidity)],
+                              children: [Icon(Icons.water_drop, color: Colors.blue)],
                             ),
                             const SizedBox(height: 25),
                             Text(
