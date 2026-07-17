@@ -83,7 +83,7 @@ class Worker {
       description = "Can't find data";
       location = "Can't find";
       main = "NA";
-      icon= "03n";
+      icon= "11n";
     }
   }
 }

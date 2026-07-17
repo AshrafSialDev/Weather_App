@@ -65,8 +65,8 @@ class _LoadingState extends State<Loading> {
     super.didChangeDependencies();
     final Map? search = ModalRoute.of(context)?.settings.arguments as Map?;
     String city = "Lahore";
-    if (search?.isNotEmpty ?? false) {
-      city = search!['searchText'];
+    if (search != null && search.containsKey('searchText')) {
+      city = search['searchText'];
     }
     startApp(city);
   }
@@ -90,8 +90,11 @@ class _LoadingState extends State<Loading> {
             ),
             Text(
               "A Product of Sial.Tech",
-              style: TextStyle(fontSize: 12, color: Colors.white,
-              fontWeight: FontWeight.bold ),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             SizedBox(height: 30),
             SpinKitFadingCircle(color: Colors.white, size: 50.0),

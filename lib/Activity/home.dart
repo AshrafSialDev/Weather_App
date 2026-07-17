@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/worker/worker.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,6 +12,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   TextEditingController searchController = TextEditingController();
   late String cityHint;
+  String? temp, hum, air, des, loc, icon, main, city;
 
   @override
   void initState() {
@@ -32,18 +34,51 @@ class _HomeState extends State<Home> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (temp == null) {
+      Map? info = ModalRoute.of(context)?.settings.arguments as Map?;
+      if (info != null) {
+        temp = info['temp_value'];
+        hum = info['humidity_value'];
+        air = info['airSpeed_value'];
+        des = info['description_value'];
+        loc = info['location_value'];
+        icon = info['icon_value'];
+        main = info['main_value'];
+        city = info['city_value'];
+      }
+    }
+  }
+
+  Future<void> _refreshData() async {
+    if (city == null) return;
+    Worker instance = Worker(location: city!);
+    await instance.getData();
+    if (!mounted) return;
+    setState(() {
+      temp = instance.temp;
+      hum = instance.humidity;
+      air = instance.airSpeed;
+      des = instance.description;
+      main = instance.main;
+      loc = instance.location;
+      icon = instance.icon;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     // cityName list moved to initState for efficiency and stability
-    
-    // Fixed the Map info retrieval to handle null safety
-    Map? info = ModalRoute.of(context)?.settings.arguments as Map?;
-    String temp = (info?['temp_value'] ?? "0");
-    String hum = info?['humidity_value'] ?? "0";
-    String air = info?['airSpeed_value'] ?? "0";
-    String des = info?['description_value'] ?? "0";
-    String loc = info?['location_value'] ?? "Unknown";
-    String icon = info?['icon_value'] ?? "03n";
-    String main = info?['main_value'] ?? "Clear";
+
+    String displayTemp = temp ?? "0";
+    String displayHum = hum ?? "0";
+    String displayAir = air ?? "0";
+    String displayDes = des ?? "0";
+    String displayLoc = loc ?? "Unknown";
+    String displayIcon = icon ?? "03n";
+    // ignore: unused_local_variable
+    String displayMain = main ?? "Clear";
 
     IconData getWeatherIcon(String iconCode) {
       switch (iconCode) {
@@ -74,232 +109,234 @@ class _HomeState extends State<Home> {
         preferredSize: const Size.fromHeight(0),
         child: AppBar(backgroundColor: Colors.blue[200], elevation: 0),
       ),
-      body: SafeArea(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topRight,
-              end: Alignment.bottomLeft,
-              colors: [Colors.blue[200]!, Colors.blue[300]!],
+      body: RefreshIndicator(
+        onRefresh: _refreshData,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [Colors.blue[200]!, Colors.blue[300]!],
+              ),
             ),
-          ),
-          child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
-                  //Search container
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (searchController.text.replaceAll(" ", "") == "") {
-                            debugPrint("Blank Search");
-                          } else {
-                            Navigator.pushReplacementNamed(context, "/loading", arguments: {
-                              "searchText" : searchController.text,
-                            });
-                          }
-                        },
-                        child: Container(
-                          margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
-                          child: const Icon(Icons.search, color: Colors.blue),
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          controller: searchController,
-                          onSubmitted: (value) {
-                             if (value.replaceAll(" ", "") == "") {
+                  Container(
+                    //Search container
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            if (searchController.text.replaceAll(" ", "") == "") {
                               debugPrint("Blank Search");
                             } else {
                               Navigator.pushReplacementNamed(context, "/loading", arguments: {
-                                "searchText" : value,
+                                "searchText" : searchController.text,
                               });
                             }
                           },
-                          decoration: InputDecoration(
-                            hintText: "Search $cityHint",
-                            border: InputBorder.none,
+                          child: Container(
+                            margin: const EdgeInsets.fromLTRB(10, 0, 5, 0),
+                            child: const Icon(Icons.search, color: Colors.blue),
                           ),
-                          cursorColor: Colors.blue,
+                        ),
+                        Expanded(
+                          child: TextField(
+                            controller: searchController,
+                            onSubmitted: (value) {
+                               if (value.replaceAll(" ", "") == "") {
+                                debugPrint("Blank Search");
+                              } else {
+                                Navigator.pushReplacementNamed(context, "/loading", arguments: {
+                                  "searchText" : value,
+                                });
+                              }
+                            },
+                            decoration: InputDecoration(
+                              hintText: "Search $cityHint",
+                              border: InputBorder.none,
+                            ),
+                            cursorColor: Colors.blue,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 5,
+                          ),
+                          padding: const EdgeInsets.all(20),
+                          child: Row(
+                            children: [
+                              Image.network(
+                                "https://openweathermap.org/img/wn/$displayIcon@2x.png",
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.image_not_supported),
+                              ),
+                              const SizedBox(width: 20),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      displayDes,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        textBaseline: TextBaseline.alphabetic,
+                                      ),
+                                    ),
+                                    Text(
+                                      "In $displayLoc",
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 5,
-                        ),
-                        padding: const EdgeInsets.all(20),
-                        child: Row(
-                          children: [
-                            Image.network(
-                              "https://openweathermap.org/img/wn/$icon@2x.png",
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.image_not_supported),
-                            ),
-                            const SizedBox(width: 20),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          margin: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 2,
+                          ),
+                          padding: const EdgeInsets.all(30),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(getWeatherIcon(displayIcon), size: 40),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    des,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                      textBaseline: TextBaseline.alphabetic,
-                                    ),
-                                  ),
-                                  Text(
-                                    "In $loc",
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                                  Text("$displayTemp", style: const TextStyle(fontSize: 60)),
+                                  const Text("°C", style: TextStyle(fontSize: 30)),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 2,
-                        ),
-                        padding: const EdgeInsets.all(30),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Icon(getWeatherIcon(icon), size: 40),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text("$temp", style: const TextStyle(fontSize: 60)),
-                                const Text("°C", style: TextStyle(fontSize: 30)),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                        margin: const EdgeInsets.fromLTRB(20, 5, 10, 0),
-                        padding: const EdgeInsets.all(26),
-                        height: 200,
-                        child: Column(
-                          children: [
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Icon(Icons.air, color: Colors.blue)],
-                            ),
-                            const SizedBox(height: 25),
-                            Text(
-                              air,
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Text("km/h"),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(22),
-                          color: Colors.white.withValues(alpha: 0.5),
-                        ),
-                        margin: const EdgeInsets.fromLTRB(10, 5, 20, 0),
-                        padding: const EdgeInsets.all(26),
-                        height: 200,
-                        child: Column(
-                          children: [
-                            const Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [Icon(Icons.water_drop, color: Colors.blue)],
-                            ),
-                            const SizedBox(height: 25),
-                            Text(
-                              hum,
-                              style: const TextStyle(
-                                fontSize: 30,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const Text("Percent"),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                Container(
-                  padding: const EdgeInsets.all(30),
-                  child: const Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        "Developed By Sial.Tech",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        "Data Provided By OpenWeatherMap.Org",
-                        style: TextStyle(fontSize: 10,
-                        color: Colors.black54,
+                            ],
+                          ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          margin: const EdgeInsets.fromLTRB(20, 5, 10, 0),
+                          padding: const EdgeInsets.all(26),
+                          height: 200,
+                          child: Column(
+                            children: [
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [Icon(Icons.air, color: Colors.blue)],
+                              ),
+                              const SizedBox(height: 25),
+                              Text(
+                                displayAir,
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text("km/h"),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(22),
+                            color: Colors.white.withValues(alpha: 0.5),
+                          ),
+                          margin: const EdgeInsets.fromLTRB(10, 5, 20, 0),
+                          padding: const EdgeInsets.all(26),
+                          height: 200,
+                          child: Column(
+                            children: [
+                              const Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [Icon(Icons.water_drop, color: Colors.blue)],
+                              ),
+                              const SizedBox(height: 25),
+                              Text(
+                                displayHum,
+                                style: const TextStyle(
+                                  fontSize: 30,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Text("Percent"),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(30),
+                    child: const Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Developed By Sial.Tech",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          "Data Provided By OpenWeatherMap.Org",
+                          style: TextStyle(fontSize: 10,
+                          color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
-      ),
     );
   }
 }

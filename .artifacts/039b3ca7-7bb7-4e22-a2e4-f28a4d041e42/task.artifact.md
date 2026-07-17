@@ -1,0 +1,9 @@
+- [x] Fix unsafe cast in `loading.dart` build method
+- [x] Fix potential null issue in `didChangeDependencies` in `loading.dart`
+- [x] Verify null safety in `home.dart` arguments
+- [x] Implement Pull-to-Refresh in `home.dart`
+- [x] Revert to OpenWeatherMap API
+    - [x] Restore `worker.dart` logic
+    - [x] Restore icon mapping in `home.dart`
+    - [x] Restore icon image URL in `home.dart`
+    - [x] Restore default icon values in `loading.dart` and `home.dart`
