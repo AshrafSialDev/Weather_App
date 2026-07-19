@@ -11,6 +11,10 @@ class Worker {
   String description;
   String main;
   String icon;
+  String feelsLike;
+  String tempMin;
+  String tempMax;
+
   Worker({
     required this.location,
     this.temp = "0",
@@ -18,7 +22,10 @@ class Worker {
     this.airSpeed = "0",
     this.description = "0",
     this.main = "0",
-    this.icon="03n",
+    this.icon = "03n",
+    this.feelsLike = "0",
+    this.tempMin = "0",
+    this.tempMax = "0",
   });
 
   //method
@@ -41,9 +48,15 @@ class Worker {
         // getting temp and humidity
         Map? tempData = data['main'];
         double gettemp = 0.0;
+        double getFeelsLike = 0.0;
+        double getTempMin = 0.0;
+        double getTempMax = 0.0;
         String gethumidity = "0";
         if (tempData != null) {
           gettemp = (tempData['temp'] as num).toDouble();
+          getFeelsLike = (tempData['feels_like'] as num).toDouble();
+          getTempMin = (tempData['temp_min'] as num).toDouble();
+          getTempMax = (tempData['temp_max'] as num).toDouble();
           gethumidity = tempData['humidity'].toString();
         }
         
@@ -67,6 +80,9 @@ class Worker {
 
         // assigning values
         temp = gettemp.toStringAsFixed(1);
+        feelsLike = getFeelsLike.toStringAsFixed(1);
+        tempMin = getTempMin.toStringAsFixed(1);
+        tempMax = getTempMax.toStringAsFixed(1);
         humidity = gethumidity;
         airSpeed = getspeed.toStringAsFixed(1);
         description = getdescription;
@@ -78,6 +94,9 @@ class Worker {
       }
     } catch (e) {
       temp = "NA";
+      feelsLike = "NA";
+      tempMin = "NA";
+      tempMax = "NA";
       humidity = "NA";
       airSpeed = "NA";
       description = "Can't find data";

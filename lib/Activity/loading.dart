@@ -18,6 +18,9 @@ class _LoadingState extends State<Loading> {
   String location = "";
   String main = "";
   String icon = "";
+  String feelsLike = "";
+  String tempMin = "";
+  String tempMax = "";
   bool isStarted = false;
 
   void startApp(String city) async {
@@ -35,7 +38,10 @@ class _LoadingState extends State<Loading> {
     main = instance.main;
     location = instance.location;
     icon = instance.icon;
-    await Future.delayed(const Duration(seconds: 2));
+    feelsLike = instance.feelsLike;
+    tempMin = instance.tempMin;
+    tempMax = instance.tempMax;
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) return;
     // Navigate to /home instead of /loading to stop the infinite loop
@@ -51,6 +57,9 @@ class _LoadingState extends State<Loading> {
         "location_value": location,
         "icon_value": icon,
         "city_value" : city,
+        "feels_like_value": feelsLike,
+        "temp_min_value": tempMin,
+        "temp_max_value": tempMax,
       },
     );
   }

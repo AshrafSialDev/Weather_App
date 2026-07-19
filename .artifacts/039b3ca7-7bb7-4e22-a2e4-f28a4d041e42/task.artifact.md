@@ -1,9 +1,5 @@
-- [x] Fix unsafe cast in `loading.dart` build method
-- [x] Fix potential null issue in `didChangeDependencies` in `loading.dart`
-- [x] Verify null safety in `home.dart` arguments
-- [x] Implement Pull-to-Refresh in `home.dart`
-- [x] Revert to OpenWeatherMap API
-    - [x] Restore `worker.dart` logic
-    - [x] Restore icon mapping in `home.dart`
-    - [x] Restore icon image URL in `home.dart`
-    - [x] Restore default icon values in `loading.dart` and `home.dart`
+- [x] Enhance Weather Data Accuracy
+    - [x] Update `worker.dart` to fetch `feels_like`, `temp_min`, and `temp_max`
+    - [x] Update `loading.dart` to pass new weather data to Home screen
+    - [x] Update `home.dart` to display "Feels Like" and "High/Low" temperatures
+    - [x] Improve UI layout in `home.dart` to accommodate new fields

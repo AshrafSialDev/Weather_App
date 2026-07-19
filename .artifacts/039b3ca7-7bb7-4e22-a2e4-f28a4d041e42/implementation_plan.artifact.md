@@ -1,29 +1,24 @@
-# Revert AccuWeather Changes
+# Brighter Icons and Animated Background for Home Page
 
-We will revert the project to use the OpenWeatherMap API, while keeping the pull-to-refresh and red screen fixes implemented earlier today.
+The goal is to enhance the visual appeal of the Home page by making the icons more vibrant ("brighter") and adding an animated gradient background that shifts over time.
 
 ## Proposed Changes
-
-### lib/worker/
-
-#### [MODIFY] [worker.dart](file:///D:/flutter_project/flutter_application_1/lib/worker/worker.dart)
-- Restore the original OpenWeatherMap API logic.
-- Remove AccuWeather-specific two-step location key logic.
-- Use the original JSON parsing for `temp`, `humidity`, `airSpeed`, etc.
 
 ### lib/Activity/
 
 #### [MODIFY] [home.dart](file:///D:/flutter_project/flutter_application_1/lib/Activity/home.dart)
-- Revert the `getWeatherIcon` function to the original OpenWeatherMap switch statement.
-- Restore the OpenWeatherMap icon image URL (`https://openweathermap.org/img/wn/`).
-- Update default icon values back to `"03n"`.
-
-#### [MODIFY] [loading.dart](file:///D:/flutter_project/flutter_application_1/lib/Activity/loading.dart)
-- Revert the default `icon` value to an empty string.
+- **Animated Background**:
+    - Implement an `AnimationController` in `_HomeState` to drive the background animation.
+    - Create a `Tween` for gradient colors or alignments to create a smooth, shifting effect.
+    - Use an `AnimatedBuilder` to wrap the background `Container`.
+- **Brighter Icons**:
+    - Update `Icon` widgets for Search, Wind, and Humidity to use brighter, more vibrant colors (e.g., `Colors.lightBlueAccent`, `Colors.amberAccent`).
+    - Update the main weather icon to have a specific color based on the weather type (e.g., yellow for sun, blue for rain) and increase its size/vibrancy.
+    - Potentially add a subtle glow effect using `Shadows` on the icons.
 
 ## Verification Plan
 
 ### Manual Verification
-- Run the app and verify that weather data is fetched correctly from OpenWeatherMap.
-- Verify that icons are displayed using OpenWeatherMap's image source.
-- Verify that the pull-to-refresh feature still works.
+- Launch the app and observe the Home screen background shifting colors smoothly.
+- Verify that icons (Search, Weather, Wind, Humidity) appear more vibrant and are easier to see against the animated background.
+- Ensure the animation is smooth and doesn't impact app performance.
