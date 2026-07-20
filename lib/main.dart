@@ -12,7 +12,6 @@ void main() {
         "/home": (context) => Home(),
         "/location": (context) => Location(),
         "/loading": (context) => Loading(),
-        // "/worker": (context) => Worker(),
       },
     ),
   );

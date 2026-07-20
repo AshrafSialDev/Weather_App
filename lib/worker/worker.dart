@@ -1,10 +1,10 @@
-//class having different methods
-//instances having different data
 import 'package:http/http.dart';
 import 'dart:convert';
 
 class Worker {
   String location;
+  double? lat;
+  double? lon;
   String temp;
   String humidity;
   String airSpeed;
@@ -16,7 +16,9 @@ class Worker {
   String tempMax;
 
   Worker({
-    required this.location,
+    this.location = "Unknown",
+    this.lat,
+    this.lon,
     this.temp = "0",
     this.humidity = "0",
     this.airSpeed = "0",
@@ -28,17 +30,22 @@ class Worker {
     this.tempMax = "0",
   });
 
-  //method
-  //async function start but return after set delay
-  // Future.delayed method start after set delay
   Future<void> getData() async {
     try {
+      Map<String, String> queryParameters = {
+        "appid": "681d7c1ea1998da88af9b913ab2c2543",
+        "units": "metric",
+      };
+
+      if (lat != null && lon != null) {
+        queryParameters["lat"] = lat.toString();
+        queryParameters["lon"] = lon.toString();
+      } else {
+        queryParameters["q"] = location.trim();
+      }
+
       Response response = await get(
-        Uri.https("api.openweathermap.org", "/data/2.5/weather", {
-          "q": location.trim(),
-          "appid": "681d7c1ea1998da88af9b913ab2c2543",
-          "units": "metric",
-        }),
+        Uri.https("api.openweathermap.org", "/data/2.5/weather", queryParameters),
       );
       Map data = jsonDecode(response.body);
 
@@ -90,7 +97,7 @@ class Worker {
         main = getmain;
         icon = geticon;
       } else {
-        throw Exception("City not found");
+        throw Exception("City/Location not found");
       }
     } catch (e) {
       temp = "NA";
@@ -99,12 +106,10 @@ class Worker {
       tempMax = "NA";
       humidity = "NA";
       airSpeed = "NA";
-      description = "Can't find data";
-      location = "Can't find";
+      description = "Check Connection";
       main = "NA";
       icon= "11n";
+      // location remains as what was passed in (e.g., "Lahore" or detected name)
     }
   }
 }
-
-Worker instance = Worker(location: "Lahore");

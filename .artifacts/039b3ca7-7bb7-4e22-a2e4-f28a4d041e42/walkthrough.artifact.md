@@ -1,31 +1,32 @@
-# Walkthrough - Enhanced Weather Data Accuracy
+# Walkthrough - Automatic Location-Based Weather
 
-I have updated the app to include more detailed weather information, which should help resolve the perceived inaccuracy compared to browser searches.
+I have updated the app to automatically detect your current location and show the weather for your area when you open the app.
 
 ## Changes Made
 
-### lib/worker/
+### Native & Infrastructure
+
+#### [pubspec.yaml](file:///D:/flutter_project/flutter_application_1/pubspec.yaml)
+- Added the `geolocator` package to access device GPS coordinates.
+
+#### [AndroidManifest.xml](file:///D:/flutter_project/flutter_application_1/android/app/src/main/AndroidManifest.xml)
+- Added necessary location permissions (`ACCESS_FINE_LOCATION` and `ACCESS_COARSE_LOCATION`) so the app can legally request your position.
+
+### Logic Updates
 
 #### [worker.dart](file:///D:/flutter_project/flutter_application_1/lib/worker/worker.dart)
-- **New Data Points**: The `Worker` class now fetches `feels_like`, `temp_min` (Low), and `temp_max` (High) temperatures from the OpenWeatherMap API.
-- **Robust Parsing**: Updated the `getData` method to safely extract these new fields from the JSON response.
-
-### lib/Activity/
+- Updated the weather engine to handle both city names AND GPS coordinates (latitude/longitude). This allows the API to be much more precise about your current weather.
 
 #### [loading.dart](file:///D:/flutter_project/flutter_application_1/lib/Activity/loading.dart)
-- **Data Transfer**: Updated the `Loading` screen to pass the new `feels_like`, `temp_min`, and `temp_max` values to the `Home` screen during navigation.
-
-#### [home.dart](file:///D:/flutter_project/flutter_application_1/lib/Activity/home.dart)
-- **UI Update**:
-    - Added a **"Feels Like"** display directly under the main temperature. This is often the number users see first in their browser.
-    - Added **High (↑) and Low (↓)** temperatures to the main weather card.
-    - Used color-coded icons (Red for High, Blue for Low) to make the data easy to read at a glance.
-- **Improved Layout**: Adjusted the main temperature row to accommodate the new information while maintaining the animated background and vibrant style.
+- **Smart Detection**: When you first open the app, it now checks for location permissions. If granted, it fetches your exact GPS position.
+- **Graceful Fallback**: If permissions are denied or GPS is turned off, the app automatically reverts to "Lahore" so you still see weather data instead of an error.
+- **Search Support**: This logic only runs on the first load. If you use the search bar on the Home screen, the app will correctly prioritize your search query over your current location.
 
 ## Verification Results
 
-- **Data Consistency**: The app now displays a total of 6 key weather metrics: Temperature, Feels Like, High, Low, Wind Speed, and Humidity.
-- **Accuracy Comparison**: By including "Feels Like" and "High/Low", the app's data should now match the primary information displayed in browser search results (like Google Weather or AccuWeather).
+- **Permission Handling**: The app correctly triggers the system location permission dialog on first run.
+- **Fallback Accuracy**: Verified that "Lahore" is correctly used as the baseline if GPS is unavailable.
+- **Precision**: By using coordinates, the app now shows weather specific to your neighborhood rather than just the general city center.
 
 > [!TIP]
-> Browsers often highlight "Feels Like" because it represents how the temperature actually affects you. Comparing this number instead of just the raw "Temp" will give you a much more accurate sense of the weather.
+> Make sure to "Allow" location access when prompted to see the weather for your current area! If you ever change your mind, you can always search for any city manually using the search bar.

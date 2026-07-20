@@ -13,6 +13,7 @@ dependencies:
   http: ^1.6.0
   flutter_spinkit: ^5.2.0
   cupertino_icons: ^1.0.8
+  geolocator: ^13.0.1
 
 dev_dependencies:
   flutter_test:
@@ -30,4 +31,4 @@ flutter:
 
   assets:
    - images/logo3.png
-   - images/home.jpg
+

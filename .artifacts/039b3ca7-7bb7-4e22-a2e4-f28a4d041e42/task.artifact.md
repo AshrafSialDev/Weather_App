@@ -1,5 +1,5 @@
-- [x] Enhance Weather Data Accuracy
-    - [x] Update `worker.dart` to fetch `feels_like`, `temp_min`, and `temp_max`
-    - [x] Update `loading.dart` to pass new weather data to Home screen
-    - [x] Update `home.dart` to display "Feels Like" and "High/Low" temperatures
-    - [x] Improve UI layout in `home.dart` to accommodate new fields
+- [x] Add `geolocator` dependency to `pubspec.yaml`
+- [x] Add location permissions to `AndroidManifest.xml`
+- [x] Update `worker.dart` to support coordinate-based weather fetching
+- [x] Update `loading.dart` to implement automatic location detection
+- [x] Verify functionality and fallback logic

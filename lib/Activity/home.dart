@@ -76,7 +76,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     ];
     final random = Random();
     cityHint = cityName[random.nextInt(cityName.length)];
-    debugPrint("initState");
   }
 
   @override
@@ -218,9 +217,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   children: [
                     GestureDetector(
                       onTap: () {
-                        if (searchController.text.replaceAll(" ", "") == "") {
-                          debugPrint("Blank Search");
-                        } else {
+                        if (searchController.text.replaceAll(" ", "") != "") {
                           Navigator.pushReplacementNamed(context, "/loading",
                               arguments: {
                                 "searchText": searchController.text,
@@ -237,9 +234,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                       child: TextField(
                         controller: searchController,
                         onSubmitted: (value) {
-                          if (value.replaceAll(" ", "") == "") {
-                            debugPrint("Blank Search");
-                          } else {
+                          if (value.replaceAll(" ", "") != "") {
                             Navigator.pushReplacementNamed(context, "/loading",
                                 arguments: {
                                   "searchText": value,
