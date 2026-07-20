@@ -1,17 +1,71 @@
-# flutter_application_1
+# 🌤️ Weather_Live
 
-A new Flutter project.
+A modern Flutter weather application that provides real-time weather information using a weather API.
 
-## Getting Started
+## 📱 Features
 
-This project is a starting point for a Flutter application.
+- 🌍 Current location weather
+- 🔍 Search weather by city
+- 🌡️ Real-time temperature
+- 💧 Humidity information
+- 💨 Wind speed
+- 🌅 Sunrise & Sunset time
+- 🔄 Pull-to-refresh
+- 📱 Responsive UI
+- ⚡ Fast and smooth performance
 
-A few resources to get you started if this is your first Flutter project:
+## 🛠️ Built With
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Dart
+- REST API
+- Geolocator
+- HTTP Package
+- Android Studio
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📸 Screenshots
+
+![img.png](img.png)
+![img_1.png](img_1.png)
+![img_2.png](img_2.png)
+
+
+## 🚀 Getting Started
+
+Clone the repository:
+
+```bash
+git clone https://github.com/AshrafSialDev/flutter_application_1.git
+```
+
+Install dependencies:
+
+```bash
+flutter pub get
+```
+
+Run the app:
+
+```bash
+flutter run
+```
+
+## 📂 Project Structure
+
+```
+lib/
+ ├── Activity/
+ ├── worker/
+ ├── main.dart
+```
+
+## 👨‍💻 Developer
+
+**Muhammad Ashraf**
+
+- GitHub: https://github.com/AshrafSialDev
+- LinkedIn: https://www.linkedin.com/in/muhammad-ashraf-as0956
+
+## ⭐ Support
+
+If you like this project, consider giving it a ⭐ on GitHub.
